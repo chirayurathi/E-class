@@ -1,0 +1,27 @@
+.land{
+    height: 0vh;
+    margin: auto;
+    position: absolute;
+    top: 0vh;
+    left: 50%;
+    transform: translateX(-50%);
+    background: -webkit-linear-gradient(.25turn, #2ecc71 10%, #8bd9b9 90%);
+    background: -moz-linear-gradient(.25turn, #2ecc71 10%, #8bd9b9 90%);
+    background: -ms-linear-gradient(.25turn, #2ecc71 10%, #8bd9b9 90%);
+    background: -o-linear-gradient(.25turn, #2ecc71 10%, #8bd9b9 90%);
+    background: linear-gradient(.25turn, #2ecc71 10%, #8bd9b9 90%);
+    animation: enter 1.5s  cubic-bezier(0.25, 0.1, 0, 0.98) 01s forwards ;
+}
+@keyframes enter{
+    from{
+        border-bottom-right-radius:0% ;
+        border-bottom-left-radius:0% ;
+        width: 100%;
+    }
+    to{
+        border-bottom-right-radius:50% ;
+        border-bottom-left-radius:50% ;
+        height: 80vh;
+        width: 150%;
+    }
+}
