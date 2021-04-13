@@ -13,14 +13,14 @@ class CustomUserManager(BaseUserManager):
             user.is_faculty=True
         elif role == "student" :
             user.is_student=True       
-        elif role == "admin" :
+        else:
             user.is_admin=True
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email="xyz@gmail.com", password=None):
+    def create_superuser(self, user_email="xyz@gmail.com", password=None):
         user = self.create_user(
             user_email=user_email,
             password=password
@@ -43,7 +43,7 @@ class CustomUser(AbstractBaseUser):
 
 
     USERNAME_FIELD = 'user_email'
-    REQUIRED_FIELDS = ['is_admin','is_institute','is_faculty','is_student']
+    # REQUIRED_FIELDS = ['is_admin','is_institute','is_faculty','is_student']
 
     objects = CustomUserManager()
 

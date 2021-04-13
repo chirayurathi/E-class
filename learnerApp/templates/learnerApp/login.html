@@ -8,8 +8,9 @@
 		<h1>Login</h1>
 		
 		<form class="form">
-			<input type="text" placeholder="Username">
-			<input type="password" placeholder="Password">
+            {% csrf_token %}
+			<input type="email" placeholder="Username" id="email">
+			<input type="password" placeholder="Password" id="password">
 			<button type="submit" id="login-button">Login</button>
 		</form>
 	</div>
@@ -27,4 +28,5 @@
 		<li></li>
 	</ul>
 </div>
+<script src="{% static 'learnerApp/js/login.js' %}"></script>
 {% endblock %}

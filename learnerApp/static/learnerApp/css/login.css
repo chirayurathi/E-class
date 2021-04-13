@@ -1,25 +1,4 @@
-  body ::-webkit-input-placeholder {
-    /* WebKit browsers */
-    font-family: 'Source Sans Pro', sans-serif;
-    color: white;
-    font-weight: 300;
-  }
-  body :-moz-placeholder {
-    /* Mozilla Firefox 4 to 18 */
-    font-family: 'Source Sans Pro', sans-serif;
-    color: white;
-    opacity: 1;
-    font-weight: 300;
-  }
-  body ::-moz-placeholder {
-    /* Mozilla Firefox 19+ */
-    font-family: 'Source Sans Pro', sans-serif;
-    color: white;
-    opacity: 1;
-    font-weight: 300;
-  }
-  body :-ms-input-placeholder {
-    /* Internet Explorer 10+ */
+  body ::-webkit-input-placeholder,body :-ms-input-placeholder, body :-moz-placeholder, body ::-moz-placeholder {
     font-family: 'Source Sans Pro', sans-serif;
     color: white;
     font-weight: 300;
