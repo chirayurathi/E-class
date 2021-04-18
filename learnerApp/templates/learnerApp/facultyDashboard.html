@@ -1,0 +1,6 @@
+{% extends "learnerApp/dashboardTemplate.html" %}
+{% load static %}
+{% block css %} <link rel="stylesheet" href="{% static 'learnerApp/css/adminDashboard.css' %}"> {% endblock %}
+{% block dashboard %}
+    <h1>Admin Dashbord user: {{ user }}</h1>
+{% endblock %}

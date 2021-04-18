@@ -1,0 +1,20 @@
+{% extends "learnerApp/base.html" %}
+{% load static %}
+{% block css %} <link rel="stylesheet" href="{% static 'learnerApp/css/dashboardTemplate.css' %}"> 
+{% block incss %}{% endblock %}
+{% endblock %}
+{% block title %} Dashboard {% endblock %}
+{% block content %}
+    <div class="sideNav activeNav">
+        <button><i class="fas fa-chevron-right"></i></button>
+        <ul>
+            <li><a>Profile</a></li>
+            {% block linkList %}{% endblock %}
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </div>
+    <div class="dashboard activeNav">
+        {% block dashboard %}{% endblock %}
+        <script src="{% static 'learnerApp/js/dashboardTemplate.js' %}"></script>
+    </div>
+{% endblock %}

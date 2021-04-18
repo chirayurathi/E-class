@@ -40,6 +40,7 @@ class CustomUser(AbstractBaseUser):
     last_login = models.DateTimeField(verbose_name='last login', auto_now=True)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
+    user_image = models.ImageField(upload_to='profile_images',null=True,blank=True)
 
 
     USERNAME_FIELD = 'user_email'
@@ -57,6 +58,11 @@ class CustomUser(AbstractBaseUser):
 	# Does this user have permission to view this app? (ALWAYS YES FOR SIMPLICITY)
     def has_module_perms(self, app_label):
         return True
+class Admin(models.Model):
+    user = models.OneToOneField('CustomUser',primary_key=True,on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=75)
+    last_name = models.CharField(max_length=75)
+    admin_number = models.PositiveIntegerField(blank=True)
 
 class Student(models.Model):
     user = models.OneToOneField('CustomUser',primary_key=True,on_delete=models.CASCADE)
