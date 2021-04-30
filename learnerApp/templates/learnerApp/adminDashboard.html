@@ -4,4 +4,14 @@
 {% block linkList %}<li><a>Institutes</a></li>{% endblock %}
 {% block dashboard %}
     <h1>Institutes</h1>
+    <div class="instituteList">
+        {% for institute in instituteList %}
+            <a class="institute">
+                {{ institute.institute_name }}
+            </a>
+        {% endfor %}
+        <a class="institute new" href="{% url 'addInstitute' %}">
+            Add Institute
+        </a>
+    </div>
 {% endblock %}

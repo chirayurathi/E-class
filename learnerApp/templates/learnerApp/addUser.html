@@ -1,0 +1,25 @@
+{% extends "learnerApp/dashboardTemplate.html" %}
+{% load static %}
+{% block incss %} <link rel="stylesheet" href="{% static 'learnerApp/css/profile.css' %}"> {% endblock %}
+{% block linkList %}<li><a href="{% url 'dashboard' %}">Institutes</a></li>{% endblock %}
+{% block dashboard %}
+    <img>
+    <form method = "POST" autocomplete="off">
+        <div class="field">
+            User Email
+            <input type="text" name="user_email" >
+        </div>
+        <div class="field">
+            Password
+            <input type="password" name="password" >
+        </div>
+        {% for inp in extraFields %}
+            <div class="field">
+                {{ inp.label }}
+                <input type="{{inp.type}}" name="{{inp.name}}">
+            </div>
+        {% endfor %}
+        {% csrf_token %}
+        <button>Save</button>
+    </form> 
+{% endblock %}

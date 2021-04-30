@@ -8,7 +8,7 @@
     <div class="sideNav activeNav">
         <button><i class="fas fa-chevron-right"></i></button>
         <ul>
-            <li><a>Profile</a></li>
+            <li><a href="{% url 'profile' %}">Profile</a></li>
             {% block linkList %}{% endblock %}
             <li><a href="{% url 'logout' %}">Logout</a></li>
         </ul>

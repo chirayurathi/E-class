@@ -60,33 +60,33 @@ class CustomUser(AbstractBaseUser):
         return True
 class Admin(models.Model):
     user = models.OneToOneField('CustomUser',primary_key=True,on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=75)
-    last_name = models.CharField(max_length=75)
-    admin_number = models.PositiveIntegerField(blank=True)
+    first_name = models.CharField(max_length=75,verbose_name="First Name",null=True,blank=True)
+    last_name = models.CharField(max_length=75,verbose_name="Last Name",null=True,blank=True)
+    admin_number = models.PositiveIntegerField(blank=True,verbose_name="Mobile Number",null=True)
 
 class Student(models.Model):
     user = models.OneToOneField('CustomUser',primary_key=True,on_delete=models.CASCADE)
-    student_id = models.CharField(max_length=75)
-    first_name = models.CharField(max_length=75)
-    last_name = models.CharField(max_length=75)
-    student_number = models.PositiveIntegerField(blank=True)
+    student_id = models.CharField(max_length=75,verbose_name="Student ID",null=True,blank=True)
+    first_name = models.CharField(max_length=75,verbose_name="First Name",null=True,blank=True)
+    last_name = models.CharField(max_length=75,verbose_name="Last Name",null=True,blank=True)
+    student_number = models.PositiveIntegerField(verbose_name="Mobile Number",null=True,blank=True)
     institute = models.ForeignKey('Institute',on_delete=models.CASCADE)
     class Meta:
         unique_together = [['student_id','institute']]
 
 class Institute(models.Model):
     user = models.OneToOneField('CustomUser',primary_key=True,on_delete=models.CASCADE)
-    institute_name = models.CharField(max_length=75)
-    institute_address = models.CharField(max_length=75)
-    institute_number = models.PositiveBigIntegerField()
-    institute_id = models.IntegerField(unique=True)
+    institute_name = models.CharField(max_length=75,verbose_name="Institute Name",null=True,blank=True)
+    institute_address = models.TextField(max_length=100,verbose_name="Address",null=True,blank=True)
+    institute_number = models.PositiveBigIntegerField(verbose_name="Mobile Number",null=True,blank=True)
+    institute_id = models.IntegerField(unique=True,verbose_name="Institute Id",null=True,blank=True)
 
 class Faculty(models.Model):
     user = models.OneToOneField('CustomUser',primary_key=True,on_delete=models.CASCADE)
-    faculty_id = models.CharField(max_length=75)
-    first_name = models.CharField(max_length=75)
-    last_name = models.CharField(max_length=75)
-    faculty_number = models.PositiveIntegerField(blank=True)
+    faculty_id = models.CharField(max_length=75,verbose_name="Faculty Id",null=True,blank=True)
+    first_name = models.CharField(max_length=75,verbose_name="First Name",null=True,blank=True)
+    last_name = models.CharField(max_length=75,verbose_name="Last Name",null=True,blank=True)
+    faculty_number = models.PositiveIntegerField(verbose_name="Mobile Number",null=True,blank=True)
     institute = models.ForeignKey('Institute',on_delete=models.CASCADE)
     class Meta:
         unique_together = [['faculty_id','institute']]
