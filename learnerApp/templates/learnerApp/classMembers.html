@@ -1,0 +1,47 @@
+{% extends 'learnerApp/classroom.html' %}
+{% load static %}
+{% block classcss %}
+<link rel="stylesheet" href="{% static 'learnerApp/css/classMembers.css' %}">
+{% endblock %}
+{% block class-content %}
+<div class="studentblock">
+<h1>Organizer</h1>
+{% if user.is_faculty %}
+<form method="POST" action="{% url 'classTransfer' id=id %}">
+    {% csrf_token %}
+    <input type="email" placeholder="Enter Email" name="user_email">
+    <button id="facultysubmit">Transfer</button>
+</form>
+{% endif %}
+<div class="studentsList">
+    <div class="member">
+        <img src="{{ classroom.faculty.user_image.url }}" alt="">
+        <div class="id">{{ classroom.faculty.faculty_id }}</div>
+        <div class="name">{{ classroom.faculty.first_name }} {{ classroom.faculty.last_name }}</div>
+        <div class="email">{{ classroom.faculty.user.user_email }}</div>
+    </div>
+</div>
+</div>
+<div class="studentblock">
+    <h1>Student</h1>
+    {% if user.is_faculty %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="email" placeholder="Enter Email" name="user_email">
+            <button id="studentsubmit">Add Student</button>
+        </form>
+    {% endif %}
+    <div class="studentsList">
+        {% for student in students %}
+        <div class="member">
+            <img src="{{ student.user_image.url }}" alt="">
+            <div class="id">{{ student.student_id }}</div>
+            <div class="name">{{ student.first_name }} {{ student.last_name }}</div>
+            <div class="email">{{ student.user.user_email }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{{error}}
+<script src="{% static 'learnerApp/js/classMembers.js' %}"></script>
+{% endblock %}

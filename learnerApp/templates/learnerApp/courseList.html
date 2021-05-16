@@ -1,0 +1,32 @@
+{% extends extemp %}
+{% load static %}
+{% block inncss %} <link rel="stylesheet" href="{% static 'learnerApp/css/dashboardTemplate.css' %}"> {% endblock %}
+{% block dashboard %}
+{% if myCourses %}
+<h1>Registered Courses</h1>
+<div class="cardList">
+    {% for course in myCourses %}
+        <a href="{% url 'course' id=course.course_id %}" class="card">
+            <div class="logo">
+                <img src="{{ course.course_image.url }}" alt="user image">
+            </div>
+            {{ course.title }}
+        </a>
+    {% endfor %}
+{% endif %}
+    <h1>Courses</h1>
+    {% for course in courses %}
+        <a href="{% url 'course' id=course.course_id %}" class="card">
+            <div class="logo">
+                <img src="{{ course.course_image.url }}" alt="user image">
+            </div>
+            {{ course.title }}
+        </a>
+    {% endfor %}
+    {% if user.is_faculty %}
+    <a class="add" href="{% url 'addCourse' %}">
+        Add Course
+    </a>
+    {% endif %}
+</div>
+{% endblock %}

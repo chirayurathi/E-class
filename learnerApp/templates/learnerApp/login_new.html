@@ -1,0 +1,32 @@
+{% extends "learnerApp/base.html" %}
+{% load static %}
+{% block css %} <link rel="stylesheet" href="{% static 'learnerApp/css/login.css' %}"> {% endblock %}
+{% block title %} Login {% endblock %}
+{% block content %}
+<div class="wrapper">
+	<div class="container">
+		<h1>Login</h1>
+		
+		<form class="form" method="POST">
+            {% csrf_token %}
+			<input type="email" name="username" placeholder="Username" id="email">
+			<input type="password" name="password" placeholder="Password" id="password">
+			<button type="submit" id="login-button">Login</button>
+		</form>
+	</div>
+	
+	<ul class="bg-bubbles">
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+</div>
+
+{% endblock %}

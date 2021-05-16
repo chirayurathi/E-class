@@ -1,0 +1,28 @@
+{% extends extemp %}
+{% load static %}
+{% block inncss %} <link rel="stylesheet" href="{% static 'learnerApp/css/classroom.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+{% block classcss %}{% endblock %}
+{% endblock %}
+{% block dashboard %}
+{% url 'classFeed' id=id as feed_url %}
+{% url 'classTests' id as tests_url %}
+{% url 'classMaterial' id as material_url %}
+{% url 'classMembers' id as members_url %}
+    <div class="classNav">
+        <div class="name">
+            <img src="{{ classroom.classroom_image.url }}" alt="class image">
+            <h1>{{ classroom.title }}</h1>
+        </div>
+        <ul>
+            {{ request.url }}
+            <li class="{% if request.path == feed_url %} active {% endif %}" ><a href="{{ feed_url }}">feed</a></li>
+            <li class="{% if tests_url in request.path  %} active {% endif %}"><a href="{{ tests_url }}">Tests</a></li>
+            <li class="{% if material_url in request.path %} active {% endif %}"><a href="{{ material_url }}">material</a></li>
+            <li class="{% if request.path == members_url %} active {% endif %}"><a href="{{ members_url }}">Members</a></li>
+        </ul>
+    </div>
+    <div class="class-content">
+        {% block class-content %}{% endblock %}
+    </div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'learnerApp/classroom.html' %}
+{% load static %}
+{% block classcss %}
+<link rel="stylesheet" href="{% static 'learnerApp/css/classTests.css' %}">
+<script src='https://meet.jit.si/external_api.js'></script>
+{% endblock %}
+{% block class-content %}
+<div id="meet"></div>
+<script>
+    classroom = JSON.parse("{{meet|escapejs}}")
+</script>
+<script src="{% static 'learnerApp/js/videoCall.js' %}"></script>
+{% endblock %}

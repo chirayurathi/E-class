@@ -1,16 +1,22 @@
 {% extends "learnerApp/dashboardTemplate.html" %}
 {% load static %}
-{% block incss %} <link rel="stylesheet" href="{% static 'learnerApp/css/adminDashboard.css' %}"> {% endblock %}
-{% block linkList %}<li><a>Institutes</a></li>{% endblock %}
+{% block incss %} <link rel="stylesheet" href="{% static 'learnerApp/css/adminDashboard.css' %}">
+{% block inncss %}{% endblock %}
+{% endblock %}
+
+{% block linkList %}<li><a href="{% url 'dashboard' %}">Institutes</a></li>{% endblock %}
 {% block dashboard %}
     <h1>Institutes</h1>
-    <div class="instituteList">
+    <div class="cardList">
         {% for institute in instituteList %}
-            <a class="institute">
+            <a class="card">
+                {% if institute.user_image %}
+                <div class="logo"><img src="{{ institute.user_image.url }}" alt="institute image"></div>
+                {% endif %}
                 {{ institute.institute_name }}
             </a>
         {% endfor %}
-        <a class="institute new" href="{% url 'addInstitute' %}">
+        <a class="add" href="{% url 'addInstitute' %}">
             Add Institute
         </a>
     </div>

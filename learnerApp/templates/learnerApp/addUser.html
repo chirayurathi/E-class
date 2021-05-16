@@ -1,17 +1,11 @@
-{% extends "learnerApp/dashboardTemplate.html" %}
+{% extends extemp %}
 {% load static %}
-{% block incss %} <link rel="stylesheet" href="{% static 'learnerApp/css/profile.css' %}"> {% endblock %}
-{% block linkList %}<li><a href="{% url 'dashboard' %}">Institutes</a></li>{% endblock %}
+{% block inncss %} <link rel="stylesheet" href="{% static 'learnerApp/css/profile.css' %}"> {% endblock %}
 {% block dashboard %}
-    <img>
     <form method = "POST" autocomplete="off">
         <div class="field">
             User Email
             <input type="text" name="user_email" >
-        </div>
-        <div class="field">
-            Password
-            <input type="password" name="password" >
         </div>
         {% for inp in extraFields %}
             <div class="field">

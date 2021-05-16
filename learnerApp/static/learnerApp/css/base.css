@@ -1,7 +1,6 @@
 body{
     width: 100%;
-    min-height: 1
-    00vh;
+    min-height: 100vh;
     padding: 0;
     margin: 0;
     box-sizing: border-box;
@@ -24,10 +23,10 @@ nav{
     padding: 0 10px;
     box-sizing: border-box;
     align-items: center;
+    color: white;
 }
 nav h1{
     font-family: 'Kiwi Maru', serif;
-    color: white;
 }
 .buttons{
     height: 100%;

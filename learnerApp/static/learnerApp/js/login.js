@@ -1,5 +1,6 @@
 document.getElementById("login-button").onclick = (e)=>{
     e.preventDefault();
+    e.preventDefault();
     xhr = new XMLHttpRequest()
     data = {
         username:document.getElementById("email").value,
@@ -11,16 +12,18 @@ document.getElementById("login-button").onclick = (e)=>{
         xhr.addEventListener("readystatechange",()=>{
             if(xhr.readyState===4){
                 let response = JSON.parse(xhr.responseText)
+                e.preventDefault();
                 console.log(response.message)
                 if(response.message === "success"){
-                    window.location.href = window.location.origin + '/dashboard'
+                    window.location.replace(window.location.origin + '/dashboard/')
+                    console.log('here')
                 }
             }
         })
         xhr.open("POST","http://127.0.0.1:8000/login/")
-        xhr.setRequestHeader('content-type','application/json')
+        xhr.setRequestHeader('content-type','text/plain')
         xhr.setRequestHeader("X-CSRFToken",csrftoken)
-        xhr.withCredentials = false
+        xhr.withCredentials =false
         xhr.send(JSON.stringify(data))
     })
 }

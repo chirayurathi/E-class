@@ -1,0 +1,31 @@
+{% extends 'learnerApp/classroom.html' %}
+{% load static %}
+{% block classcss %}
+<link rel="stylesheet" href="{% static 'learnerApp/css/classTests.css' %}">
+{% endblock %}
+{% block class-content %}
+{% if user.is_faculty %}
+<a href="{% url 'addClassTest' id=id %}" class="add">Create Test</a>
+{% endif %}
+<div class="testsList">
+    {% for test in tests %}
+    <div class="test">
+        <i class="fas fa-file-alt"></i>
+        <div class="title">{{ test.title }}</div>
+        {% if user.is_faculty %}
+        <a href="{% url 'classTestManage' id=id tid=test.test_id %}">View</a>
+        {% else %}
+        <a href="{% url 'testAttend' id=id tid=test.test_id %}">Take Test</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+<h2>Responses</h2>
+    {% for response in responses %}
+    <div class="test report">
+        <div class="title">{{ response.student.first_name }} {{ response.student.last_name }} - {{ response.student.student_id }}</div>
+        <div class="marks">{{ response.score }}</div>
+        <a href="{% url 'viewResponse' id=id tid=response.test.test_id rid=response.response_id %}">View Answer Script</a>
+    </div>
+    {% endfor %}
+{% endblock %}

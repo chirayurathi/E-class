@@ -1,0 +1,43 @@
+{% extends 'learnerApp/classroom.html' %}
+{% load static %}
+{% block classcss %}
+<link rel="stylesheet" href="{% static 'learnerApp/css/classTests.css' %}">
+<link rel="stylesheet" href="{% static 'learnerApp/css/profile.css' %}">
+{% endblock %}
+{% block class-content %}
+<form method = "POST" autocomplete="off" class="class">
+    <div class="field">
+        Question
+        <input type="text" name="question" required>
+    </div>
+    <div class="field">
+        option A
+        <input type="text" name="option_1" required>
+    </div>
+    <div class="field">
+        option B
+        <input type="text" name="option_2" required>
+    </div>
+    <div class="field">
+        option C
+        <input type="text" name="option_3" required>
+    </div>
+    <div class="field">
+        option D
+        <input type="text" name="option_4" required>
+    </div>
+    
+    <div class="field">
+        Correct Option
+        <select name="correct" id="" required>
+            <option value="option_1" selected>option A</option>
+            <option value="option_2">option B</option>
+            <option value="option_3">option C</option>
+            <option value="option_4">option D</option>
+        </select>
+    </div>
+
+    {% csrf_token %}
+    <button>Save</button>
+</form> 
+{% endblock %}

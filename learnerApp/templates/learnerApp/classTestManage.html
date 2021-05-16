@@ -1,0 +1,41 @@
+{% extends 'learnerApp/classroom.html' %}
+{% load static %}
+{% block classcss %}
+{% load custom_tag %}
+<link rel="stylesheet" href="{% static 'learnerApp/css/classTests.css' %}">
+<link rel="stylesheet" href="{% static 'learnerApp/css/classTestManage.css' %}">
+{% endblock %}
+{% block class-content %}
+<h1>{{ test.title }}</h1>
+<h6>Start Time:</h6>{{ test.start_time }}
+<h6>End Time:</h6>{{ test.end_time }}
+<a href="{% url 'togglePublish' id=id tid=tid %}" class="add">{% if test.published %}Unpublish{% else %}Publish{% endif %}</a>
+{% if test.published %}{% else %}
+<a href="{% url 'addQuestion' id=id tid=tid %}" class="add lower">Add Question</a>
+{% endif %}
+<div class="testsList">
+    <h2>Questions</h2>
+    <ul class="questionList">
+    {% for question in questions %}
+        <li class="question">
+            {{ forloop.counter }}. {{ question.question }}
+            <ul class="options">
+                <li>A. {{ question.option_1 }}</li>
+                <li>B. {{ question.option_2 }}</li>
+                <li>C. {{ question.option_3 }}</li>
+                <li>D. {{ question.option_4 }}</li>
+            </ul>
+            <p>Correct Option: {{ question|get_item:question.correct }}</p>
+        </li>
+    {% endfor %}
+    </ul>
+    <h2>Responses</h2>
+    {% for response in responses %}
+    <div class="test report">
+        <div class="title">{{ response.student.first_name }} {{ response.student.last_name }} - {{ response.student.student_id }}</div>
+        <div class="marks">{{ response.score }}</div>
+        <a href="{% url 'viewResponse' id=id tid=test.test_id rid=response.response_id %}">View Answer Script</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

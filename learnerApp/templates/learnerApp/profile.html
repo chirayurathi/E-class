@@ -1,10 +1,9 @@
-{% extends "learnerApp/dashboardTemplate.html" %}
+{% extends extemp %}
 {% load static %}
-{% block incss %} <link rel="stylesheet" href="{% static 'learnerApp/css/profile.css' %}"> {% endblock %}
-{% block linkList %}<li><a href="{% url 'dashboard' %}">Institutes</a></li>{% endblock %}
+{% block inncss %} <link rel="stylesheet" href="{% static 'learnerApp/css/profile.css' %}"> {% endblock %}
 {% block dashboard %}
-    <img>
-    <form method = "POST" autocomplete="off">
+    <img src="{{ image }}">
+    <form method = "POST" autocomplete="off" enctype="multipart/form-data">
         {% for field in form %}
         <div class="field">
             {{ field.label }}

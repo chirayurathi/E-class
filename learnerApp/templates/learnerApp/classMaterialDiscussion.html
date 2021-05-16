@@ -1,0 +1,33 @@
+{% extends 'learnerApp/classroom.html' %}
+{% load static %}
+{% block classcss %} <link rel="stylesheet" href="{% static 'learnerApp/css/classMaterialDiscussion.css' %}">{% endblock %}
+{% block class-content %}
+<div class="material">
+    <i class="fas fa-file-alt"></i>
+    <div class="title">{{ material.title }}</div>
+        <a href="{{ material.material.url }}" download>Download</a>
+</div>
+<div class="messages">
+    {% for message in messages %}
+    <div class="message">
+        <div class="dp"><img src="{{ message.user_image }}"></div>
+        <div class="text">
+            <div>
+                <span>{{ message.user_name }}</span>
+                <span>{{ message.timestamp }}</span>
+            </div>
+            {{ message.message }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<form class="messageinp" method="POST" autocomplete="off">
+    {% csrf_token %}
+    <input type="text" name="message" placeholder="Enter message here">
+    <button><i class="fas fa-paper-plane"></i></button>
+</form>
+<script>
+    var objDiv = document.getElementsByClassName("messages")[0];
+    objDiv.scrollTop = objDiv.scrollHeight - objDiv.clientHeight;
+</script>
+{% endblock %}

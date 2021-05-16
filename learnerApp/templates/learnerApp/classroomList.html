@@ -1,0 +1,24 @@
+{% extends extemp %}
+{% load static %}
+{% block inncss %} <link rel="stylesheet" href="{% static 'learnerApp/css/dashboardTemplate.css' %}"> {% endblock %}
+{% block dashboard %}
+<h1>Classrooms</h1>
+<div class="cardList">
+    {% for classroom in classroomList %}
+        <a class="card" href="{% url 'classroom' id=classroom.classroom_id %}">
+            <div class="logo">
+                {% if classroom.classroom_image %}
+                <img src="{{ classroom.classroom_image.url }}" alt="">
+                {% else %}
+                {% endif %}
+            </div>
+            {{ classroom.title }}
+        </a>
+    {% endfor %}
+    {% if user.is_faculty %}
+    <a class="add" href="{% url 'addClassroom' %}">
+        Add classroom
+    </a>
+    {% endif %}
+</div>
+{% endblock %}

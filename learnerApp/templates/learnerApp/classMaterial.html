@@ -1,0 +1,22 @@
+{% extends 'learnerApp/classroom.html' %}
+{% load static %}
+{% block classcss %}
+<link rel="stylesheet" href="{% static 'learnerApp/css/classMaterials.css' %}">
+{% endblock %}
+{% block class-content %}
+{% if user.is_faculty %}
+<a href="{% url 'addClassMaterial' id=id %}" class="add">Add Material</a>
+{% endif %}
+<div class="materialList">
+    {% for material in materials %}
+    <div class="material">
+        <i class="fas fa-file-alt"></i>
+        <div class="title">{{ material.title }}</div>
+        <div class="buttons">
+            <a href="{{ material.material.url }}" download>Download</a>
+            <a href="{% url 'classMaterialDiscussion' id=id mid=material.material_id %}">Discuss</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

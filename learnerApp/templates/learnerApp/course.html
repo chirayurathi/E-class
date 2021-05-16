@@ -1,0 +1,49 @@
+{% extends extemp %}
+{% load static %}
+{% block inncss %} <link rel="stylesheet" href="{% static 'learnerApp/css/course.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+{% block classcss %}{% endblock %}
+{% endblock %}
+{% block dashboard %}
+<div class="details">
+    <div class="main">
+        <img src="{{ course.course_image.url }}" alt="">
+        <div class="title">
+            <h1>{{ course.title }}</h1>
+            <p>Added On: {{ course.added_on }}</p>
+            <p>Enrollments: {{ course.students.count }}</p>
+        </div>
+    </div>
+    <div class="description">
+        {{ course.description }}
+    </div>
+    <div class="faculty">
+        <p>Offered By,</p>
+        <div>
+            <img src="{{ course.faculty.user_image.url }}" alt="">
+            <p>{{ course.faculty.first_name }} {{ course.faculty.last_name }}</p>
+        </div>
+    </div>
+    {% if user.is_student %}
+    {% if registered %}
+    <a href="" class="reg">Registered</a>
+    {% else %}
+    <a href="{% url 'courseRegister' id=id %}" class="reg">Register</a>
+    {% endif %}
+    {% endif %}
+</div>
+<div class="videos">
+    <h1>Video Lectures</h1>
+    {% if user.is_faculty %}
+    <a href="{% url 'addCourseVideo' id=id %}" class="add">Add Video</a>
+    {% endif %}
+    {% for video in videos %}
+    <a href="" class="card">
+        <div class="logo">
+            <video src="{{ video.video.url }}"></video>
+        </div>
+        {{ video.title }}
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

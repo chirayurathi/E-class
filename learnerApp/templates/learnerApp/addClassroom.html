@@ -1,0 +1,13 @@
+{% extends 'learnerApp/facultyDashboard.html' %}
+{% load static %}
+{% block inncss %} <link rel="stylesheet" href="{% static 'learnerApp/css/profile.css' %}"> {% endblock %}
+{% block dashboard %}
+    <form method = "POST" autocomplete="off" class="class">
+        <div class="field">
+            Classroom Name
+            <input type="text" name="title" >
+        </div>
+        {% csrf_token %}
+        <button>Save</button>
+    </form> 
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'learnerApp/classroom.html' %}
+{% load static %}
+{% block classcss %}
+{% load custom_tag %}
+<link rel="stylesheet" href="{% static 'learnerApp/css/classTests.css' %}">
+<link rel="stylesheet" href="{% static 'learnerApp/css/classTestManage.css' %}">
+{% endblock %}
+{% block class-content %}
+<h1>{{ test.title }}</h1>
+<h6>Start Time:</h6>{{ test.start_time }}
+<h6>End Time:</h6>{{ test.end_time }}
+<div class="testsList">
+    <form method="POST" autocomplete="off">
+        <h2>Questions</h2>
+        {% csrf_token %}
+        <ul class="questionList">
+        {% for question in questions %}
+            <li class="question gray">
+                {{ forloop.counter }}. {{ question.question }}
+                <ul class="options">
+                    <li><input type="radio" name="{{ question.question_id }}" value="option_1"> {{ question.option_1 }}</li>
+                    <li><input type="radio" name="{{ question.question_id }}" value="option_2"> {{ question.option_2 }}</li>
+                    <li><input type="radio" name="{{ question.question_id }}" value="option_3"> {{ question.option_3 }}</li>
+                    <li><input type="radio" name="{{ question.question_id }}" value="option_4"> {{ question.option_4 }}</li>
+                </ul>
+            </li>
+        {% endfor %}
+        </ul>
+        <button>Submit</button>
+    </form>
+</div>
+{% endblock %}
