@@ -228,3 +228,35 @@ class TestQuestionResponse(models.Model):
     question = models.ForeignKey('TestQuestion',on_delete=models.CASCADE)
     option = models.CharField(max_length=50)
     is_correct = models.BooleanField()
+
+class CourseTest(models.Model):
+    course = models.OneToOneField('Course',models.CASCADE,primary_key=True)
+    published = models.BooleanField(default=False)
+
+class CourseTestQuestion(models.Model):
+    question_id = models.BigAutoField(primary_key=True)
+    test = models.ForeignKey('CourseTest',on_delete=models.CASCADE)
+    question = models.CharField(max_length = 200)
+    option_1 = models.CharField(max_length = 100)
+    option_2 = models.CharField(max_length = 100)
+    option_3 = models.CharField(max_length = 100)
+    option_4 = models.CharField(max_length = 100)
+    correct = models.CharField(max_length = 50)
+
+class CourseTestResponse(models.Model):
+    response_id = models.BigAutoField(primary_key=True)
+    test = models.ForeignKey('CourseTest',on_delete = models.CASCADE)
+    student = models.ForeignKey('Student',on_delete=models.CASCADE)
+
+    @property
+    def score(self):
+        answers = CourseTestQuestionResponse.objects.filter(response = self)
+        correct = answers.filter(is_correct = True)
+        return(str(correct.count()) + '/' + str(answers.count()))
+
+class CourseTestQuestionResponse(models.Model):
+    q_response_id = models.BigAutoField(primary_key=True)
+    response = models.ForeignKey('CourseTestResponse',on_delete=models.CASCADE)
+    question = models.ForeignKey('CourseTestQuestion',on_delete=models.CASCADE)
+    option = models.CharField(max_length=50)
+    is_correct = models.BooleanField()

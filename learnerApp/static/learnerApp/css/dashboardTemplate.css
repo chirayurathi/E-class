@@ -153,3 +153,43 @@
 .add:hover {
     background-color: #2ecc71;
 }
+
+@media only screen and (max-width: 700px) {
+    .dashboard{
+        padding:10vh 5%;
+    }
+    .sideNav{
+        width: 80%;
+    }
+    .cardList{
+        text-align: center;
+    }
+    .add{
+        top:10vh;
+        right: 1%;
+        padding: 5px 10px;
+        color: white;
+        border-radius: 3px;
+        width: 125px;
+        cursor: pointer;
+        font-size: 12px;
+        transition-duration: 0.25s;
+        margin: 10px auto;
+        display: block;
+        z-index: 20;
+        text-align: center;
+    }
+    h1{
+        font-size: 23px;
+    }
+    .card{
+        margin:5% auto;
+    }
+    .question{
+        margin-left: 0 !important;
+    }
+    .test{
+        width: 100% !important;
+        font-size: 12px !important;
+    }
+}

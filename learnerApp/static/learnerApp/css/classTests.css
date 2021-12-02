@@ -102,3 +102,33 @@ form h2{
     height: 100%;
     width: 100%;
 }
+
+@media only screen and (max-width:700px){
+    .add{
+        top:10vh;
+        right: 1%;
+        padding: 5px 10px;
+        color: white;
+        border-radius: 3px;
+        width: 125px;
+        cursor: pointer;
+        font-size: 12px;
+        transition-duration: 0.25s;
+        margin: 10px auto;
+        display: block;
+        z-index: 20;
+        text-align: center;
+    }
+    ul{
+        margin-left:0 ;
+        padding-left: 0;
+    }
+    li{
+        margin-left: 0;
+        padding-left: 0;
+    }
+    .test a{
+        padding: 5px 7px;
+        font-size: 10px;
+    }
+}

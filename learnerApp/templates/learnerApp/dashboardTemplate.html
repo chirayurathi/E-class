@@ -14,6 +14,13 @@
         </ul>
     </div>
     <div class="dashboard activeNav">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %} > {{ message }} </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
         {% block dashboard %}{% endblock %}
         <script src="{% static 'learnerApp/js/dashboardTemplate.js' %}"></script>
     </div>

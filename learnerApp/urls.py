@@ -34,7 +34,7 @@ urlpatterns = [
     path('classroom/<int:id>/tests/<int:tid>/response/<int:rid>/',views.viewResponse, name="viewResponse"),
     path('delete/',views.clearMaterial),
     path('createimg/',views.createImage),
-    path('createAdmin/',views.createAdmin),
+    path('createAdmin/',views.createAdmin, name='createAdmin'),
     path('courses/',views.courseList,name='courseList'),
     path('courses/<int:id>/',views.viewCourse,name='course'),
     path('courses/<int:id>/register',views.courseRegister,name='courseRegister'),

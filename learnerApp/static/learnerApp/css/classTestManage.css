@@ -29,3 +29,6 @@ h2{
 .question.incorrect{
     background-color: rgba(247, 228, 228, 0.836);
 }
+.testsList{
+    padding-bottom: 50px;
+}

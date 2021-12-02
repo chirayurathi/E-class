@@ -21,6 +21,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt,ensure_csrf_cookie
+from django.contrib import messages
 
 @register.filter
 def get_item(dictionary, key):
@@ -32,6 +33,10 @@ def home(request):
         return redirect('dashboard')
     else:
         return render(request,'learnerApp/home.html')
+
+def createAdmin(request):
+    Admin.objects.create(user=request.user)
+    return redirect('dashboard')
 
 # @csrf_exempt
 # def login(request):
@@ -62,7 +67,8 @@ def login(request):
             # print(user_data)
             user = authenticate(username=username,password=password)
             if user is None:
-                return JsonResponse({'message':"Invalid Email or Password"},status="500")
+                messages.error(request,"Invalid Credentials")
+                return render(request,'learnerApp/login_new.html')
             else:
                 auth_login(request,user)
                 # return JsonResponse({'message':"success"})
@@ -95,8 +101,12 @@ def adminDashboard(request):
     except:
         return redirect('createAdmin')
 def instituteDashboard(request):
-    facultyList = Faculty.objects.filter(institute= Institute.objects.get(user=request.user))
-    return render(request,'learnerApp/instituteDashboard.html',context={'user':request.user,'facultyList':facultyList})
+    try:
+        facultyList = Faculty.objects.filter(institute= Institute.objects.get(user=request.user))
+        return render(request,'learnerApp/instituteDashboard.html',context={'user':request.user,'facultyList':facultyList})
+    except Exception as ex:
+        messages.error(request,str(ex))
+        return redirect('home')
 
 def facultyDashboard(request):
     # return render(request,'learnerApp/facultyDashboard.html',context={'user':request.user})
@@ -121,41 +131,46 @@ def dashboard(request):
 
 @login_required(login_url="/login/")
 def profile(request):
+    form = None
+    if request.user.is_admin:
+        instance = Admin.objects.get(user=request.user)
+        form = AdminForm(instance=instance)
+    elif request.user.is_institute:
+        instance = Institute.objects.get(user=request.user)
+        form = InstituteForm(instance=instance)
+    elif request.user.is_faculty:
+        instance = Faculty.objects.get(user=request.user)
+        form = FacultyForm(instance=instance)
+    elif request.user.is_student:
+        instance = Student.objects.get(user=request.user)
+        form = StudentForm(instance=instance)
+    extemp = getBasetemp(request)
+    image = instance.user_image.url
+
     if request.method == 'POST':
-        form = None
-        if request.user.is_admin:
-            form = AdminForm(request.POST,request.FILES,instance=Admin.objects.get(user=request.user))
-        elif request.user.is_institute:
-            form = InstituteForm(request.POST,request.FILES,instance=Institute.objects.get(user=request.user))
-        elif request.user.is_faculty:
-            form = FacultyForm(request.POST,request.FILES,instance=Faculty.objects.get(user=request.user))
-        elif request.user.is_student:
-            form = StudentForm(request.POST,request.FILES,instance=Student.objects.get(user=request.user))
-        else:
-            raise Http404("User role does not exist")   
-        if form.is_valid():
-            form.save()
-        else:
-            print(form.errors)
-        return redirect('dashboard')  
+        try:
+            form = None
+            if request.user.is_admin:
+                form = AdminForm(request.POST,request.FILES,instance=Admin.objects.get(user=request.user))
+            elif request.user.is_institute:
+                form = InstituteForm(request.POST,request.FILES,instance=Institute.objects.get(user=request.user))
+            elif request.user.is_faculty:
+                form = FacultyForm(request.POST,request.FILES,instance=Faculty.objects.get(user=request.user))
+            elif request.user.is_student:
+                form = StudentForm(request.POST,request.FILES,instance=Student.objects.get(user=request.user))
+            else:
+                raise Http404("User role does not exist")   
+            if form.is_valid():
+                form.save()
+            else:
+                print(form.errors)
+            return redirect('dashboard')  
+        except Exception as ex:
+            messages.error(request,str(ex))
+            return render(request,'learnerApp/profile.html',context={'user':request.user,'image':image,'form':form,'extemp':extemp})
     else:
-        form = None
-        if request.user.is_admin:
-            instance = Admin.objects.get(user=request.user)
-            form = AdminForm(instance=instance)
-        elif request.user.is_institute:
-            instance = Institute.objects.get(user=request.user)
-            form = InstituteForm(instance=instance)
-        elif request.user.is_faculty:
-            instance = Faculty.objects.get(user=request.user)
-            form = FacultyForm(instance=instance)
-        elif request.user.is_student:
-            instance = Student.objects.get(user=request.user)
-            form = StudentForm(instance=instance)
-        extemp = getBasetemp(request)
-        image = instance.user_image.url
         return render(request,'learnerApp/profile.html',context={'user':request.user,'image':image,'form':form,'extemp':extemp})
-    
+
 def getBasetemp(request):
     if request.user.is_admin:
         extemp = "learnerApp/adminDashboard.html"
@@ -169,97 +184,107 @@ def getBasetemp(request):
 
 @login_required(login_url="/login/")
 def addInstitute(request):
+    extraFields = [
+        {
+            'label':"Institute Name",
+            'name':'institute_name',
+            'type':'text'
+        },
+        {
+            'label':"Institute Id",
+            'name':'institute_id',
+            'type':'number'
+        },
+        {
+            'label':"Institute Address",
+            'name':'institute_address',
+            'type':'text'
+        },
+        {
+            'label':"Institute Number",
+            'name':'institute_number',
+            'type':'number'
+        }
+    ]
+    extemp = getBasetemp(request)
     if request.method == "POST":
-        password = get_random_string()
-        user  = CustomUser.objects.create_user(user_email=request.POST.get('user_email'),role="institute",password=password)
-        user.save()
-        institute_name = request.POST.get('institute_name')
-        obj = Institute.objects.create(user=user,institute_name=institute_name,institute_address=request.POST.get('institute_address'),institute_id=request.POST.get('institute_id'))
-        sendPass(institute_name,user.user_email,password)
-        createImage(request.POST.get('institute_name'))
-        im = Image.open(settings.MEDIA_ROOT+'/learnerApp/images/test.png')
-        blob = BytesIO()
-        im.save(blob,'PNG')
-        blob.seek(0)
-        name = str(uuid1())+'.png'
-        imfile = File(blob,name=name)
-        obj.user_image.save(name,imfile,save=True)
-        obj.save()
-        return redirect('dashboard')
+        try:
+            password = get_random_string()
+            user  = CustomUser.objects.create_user(user_email=request.POST.get('user_email'),role="institute",password=password)
+            user.save()
+            institute_name = request.POST.get('institute_name')
+            obj = Institute.objects.create(user=user,institute_name=institute_name,institute_address=request.POST.get('institute_address'),institute_id=request.POST.get('institute_id'))
+            sendPass(institute_name,user.user_email,password)
+            createImage(request.POST.get('institute_name'))
+            im = Image.open(settings.MEDIA_ROOT+'/learnerApp/images/test.png')
+            blob = BytesIO()
+            im.save(blob,'PNG')
+            blob.seek(0)
+            name = str(uuid1())+'.png'
+            imfile = File(blob,name=name)
+            obj.user_image.save(name,imfile,save=True)
+            obj.save()
+            messages.success(request,"New Institute Added")
+            return redirect('dashboard')
+        except Exception as ex:
+            messages.error(request,str(ex))
+            return render(request,'learnerApp/addUser.html',context={'extraFields':extraFields,'extemp':extemp})
     else:
-        extraFields = [
-            {
-                'label':"Institute Name",
-                'name':'institute_name',
-                'type':'text'
-            },
-            {
-                'label':"Institute Id",
-                'name':'institute_id',
-                'type':'number'
-            },
-            {
-                'label':"Institute Address",
-                'name':'institute_address',
-                'type':'text'
-            },
-            {
-                'label':"Institute Number",
-                'name':'institute_number',
-                'type':'number'
-            }
-        ]
-        extemp = getBasetemp(request)
         return render(request,'learnerApp/addUser.html',context={'extraFields':extraFields,'extemp':extemp})
 
 @login_required(login_url="/login/")
 def addFaculty(request):
+    extraFields = [
+        {
+            'label':"First Name",
+            'name':'first_name',
+            'type':'text'
+        },
+        {
+            'label':"Last Name",
+            'name':'last_name',
+            'type':'text'
+        },
+        {
+            'label':"Faculty Id",
+            'name':'faculty_id',
+            'type':'text'
+        },
+        {
+            'label':"Faculty Number",
+            'name':'faculty_number',
+            'type':'number'
+        }
+    ]
+    extemp = getBasetemp(request)
     if request.method == "POST":
-        password = get_random_string()
-        user  = CustomUser.objects.create_user(user_email=request.POST.get('user_email'),role="faculty",password=password)
-        user.save()
-        institute = Institute.objects.get(user=request.user)
-        faculty_id = request.POST.get('faculty_id')
-        faculty_number = request.POST.get('faculty_number')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        obj = Faculty.objects.create(user=user,faculty_id=faculty_id,faculty_number=faculty_number,first_name=first_name,last_name=last_name,institute=institute)
-        last_name = request.POST.get('last_name') if request.POST.get('last_name') else ""
-        sendPass(request.POST.get('first_name')+" "+ last_name,request.POST.get('user_email'),password)
-        createImage(request.POST.get('first_name')+" "+ last_name)
-        im = Image.open(settings.MEDIA_ROOT+'/learnerApp/images/test.png')
-        blob = BytesIO()
-        im.save(blob,'PNG')
-        blob.seek(0)
-        name = str(uuid1())+'.png'
-        imfile = File(blob,name=name)
-        obj.user_image.save(name,imfile,save=True)
-        obj.save()
-        return redirect('dashboard')
+        try:
+            password = get_random_string()
+            user  = CustomUser.objects.create_user(user_email=request.POST.get('user_email'),role="faculty",password=password)
+            user.save()
+            institute = Institute.objects.get(user=request.user)
+            faculty_id = request.POST.get('faculty_id')
+            faculty_number = request.POST.get('faculty_number')
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            obj = Faculty.objects.create(user=user,faculty_id=faculty_id,faculty_number=faculty_number,first_name=first_name,last_name=last_name,institute=institute)
+            last_name = request.POST.get('last_name') if request.POST.get('last_name') else ""
+            sendPass(request.POST.get('first_name')+" "+ last_name,request.POST.get('user_email'),password)
+            createImage(request.POST.get('first_name')+" "+ last_name)
+            im = Image.open(settings.MEDIA_ROOT+'/learnerApp/images/test.png')
+            blob = BytesIO()
+            im.save(blob,'PNG')
+            blob.seek(0)
+            name = str(uuid1())+'.png'
+            imfile = File(blob,name=name)
+            obj.user_image.save(name,imfile,save=True)
+            obj.save()
+            messages.success(request, "New Faculty Added.")
+            return redirect('dashboard')
+        except Exception as ex:
+            messages.error(request, str(ex))
+            return render(request,'learnerApp/addUser.html',context={'extraFields':extraFields,'extemp':extemp})
     else:
-        extraFields = [
-            {
-                'label':"First Name",
-                'name':'first_name',
-                'type':'text'
-            },
-            {
-                'label':"Last Name",
-                'name':'last_name',
-                'type':'text'
-            },
-            {
-                'label':"Faculty Id",
-                'name':'faculty_id',
-                'type':'text'
-            },
-            {
-                'label':"Faculty Number",
-                'name':'faculty_number',
-                'type':'number'
-            }
-        ]
-        extemp = getBasetemp(request)
         return render(request,'learnerApp/addUser.html',context={'extraFields':extraFields,'extemp':extemp})
 
 @login_required(login_url="/login/")
@@ -283,75 +308,86 @@ def classroomList(request):
 @login_required(login_url="/login/")
 def addClassroom(request):
     if request.method == 'POST':
-        title = request.POST.get('title')
-        faculty = Faculty.objects.get(user=request.user)
-        createImage(title)
-        im = Image.open(settings.MEDIA_ROOT+'/learnerApp/images/test.png')
-        blob = BytesIO()
-        im.save(blob,'PNG')
-        blob.seek(0)
-        name = str(uuid1())+'.png'
-        imfile = File(blob,name=name)
-        obj = Classroom.objects.create(faculty=faculty,title=title)
-        obj.classroom_image.save(name,imfile,save=True)
-        obj.save()
-        return redirect('classroom',obj.classroom_id)
+        try:
+            title = request.POST.get('title')
+            faculty = Faculty.objects.get(user=request.user)
+            createImage(title)
+            im = Image.open(settings.MEDIA_ROOT+'/learnerApp/images/test.png')
+            blob = BytesIO()
+            im.save(blob,'PNG')
+            blob.seek(0)
+            name = str(uuid1())+'.png'
+            imfile = File(blob,name=name)
+            obj = Classroom.objects.create(faculty=faculty,title=title)
+            obj.classroom_image.save(name,imfile,save=True)
+            obj.save()
+            messages.success(request, "New class Added.")
+            return redirect('classroom',obj.classroom_id)
+        except Exception as ex:
+            messages.error(request, str(ex))
+            return render(request, 'learnerApp/addClassroom.html')
     else:
         return render(request, 'learnerApp/addClassroom.html')
 
 @login_required(login_url="/login/")
 def addStudent(request):
-    if request.method == "POST":
-        password = get_random_string()
-        user  = CustomUser.objects.create_user(user_email=request.POST.get('user_email'),role="student",password=password)
-        user.save()
-        if request.user.is_institute:
-            institute = Institute.objects.get(user=request.user)
-        elif request.user.is_faculty:
-            institute = Faculty.objects.get(user=request.user).institute
+    extraFields = [
+        {
+            'label':"First Name",
+            'name':'first_name',
+            'type':'text'
+        },
+        {
+            'label':"Last Name",
+            'name':'last_name',
+            'type':'text'
+        },
+        {
+            'label':"Student Id",
+            'name':'student_id',
+            'type':'text'
+        },
+        {
+            'label':"Student Number",
+            'name':'student_number',
+            'type':'number'
+        }
+    ]
+    extemp = getBasetemp(request)
+    try:
+        if request.method == "POST":
+            password = get_random_string()
+            user  = CustomUser.objects.create_user(user_email=request.POST.get('user_email'),role="student",password=password)
+            user.save()
+            if request.user.is_institute:
+                institute = Institute.objects.get(user=request.user)
+            elif request.user.is_faculty:
+                institute = Faculty.objects.get(user=request.user).institute
+            else:
+                raise Http404("User does not have permission to add student")
+            student_id = request.POST.get('student_id')
+            student_number = request.POST.get('student_number')
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            obj = Student.objects.create(user=user,first_name=first_name,last_name=last_name,student_id=student_id,student_number=student_number,institute=institute)
+            last = request.POST.get('last_name') if request.POST.get('last_name') else ""
+            createImage(first_name+" "+ last)
+            sendPass(first_name+" "+ last,user.user_email,password)
+            im = Image.open(settings.MEDIA_ROOT+'/learnerApp/images/test.png')
+            blob = BytesIO()
+            im.save(blob,'PNG')
+            blob.seek(0)
+            name = str(uuid1())+'.png'
+            imfile = File(blob,name=name)
+            obj.user_image.save(name,imfile,save=True)
+            obj.save()
+            messages.success(request,"New Student Created.")
+            return redirect('studentList')
         else:
-            raise Http404("User does not have permission to add student")
-        student_id = request.POST.get('student_id')
-        student_number = request.POST.get('student_number')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        obj = Student.objects.create(user=user,first_name=first_name,last_name=last_name,student_id=student_id,student_number=student_number,institute=institute)
-        last = request.POST.get('last_name') if request.POST.get('last_name') else ""
-        createImage(first_name+" "+ last)
-        sendPass(first_name+" "+ last,user.user_email,password)
-        im = Image.open(settings.MEDIA_ROOT+'/learnerApp/images/test.png')
-        blob = BytesIO()
-        im.save(blob,'PNG')
-        blob.seek(0)
-        name = str(uuid1())+'.png'
-        imfile = File(blob,name=name)
-        obj.user_image.save(name,imfile,save=True)
-        obj.save()
-        return redirect('studentList')
-    else:
-        extraFields = [
-            {
-                'label':"First Name",
-                'name':'first_name',
-                'type':'text'
-            },
-            {
-                'label':"Last Name",
-                'name':'last_name',
-                'type':'text'
-            },
-            {
-                'label':"Student Id",
-                'name':'student_id',
-                'type':'text'
-            },
-            {
-                'label':"Student Number",
-                'name':'student_number',
-                'type':'number'
-            }
-        ]
-        extemp = getBasetemp(request)
+            return render(request,'learnerApp/addUser.html',context={'extraFields':extraFields,'extemp':extemp})
+    except Exception as ex:
+        print(ex)
+        messages.error(request,str(ex))
         return render(request,'learnerApp/addUser.html',context={'extraFields':extraFields,'extemp':extemp})
 
 def createImage(title):
@@ -390,6 +426,7 @@ def classFeedView(request,id):
     try:
         classroom = Classroom.objects.get(pk=id)    
     except:
+        messages.error(request,"Class Does Not Exist.")
         return redirect('dashboard')
     extemp = getBasetemp(request)
     if request.method == 'POST':
@@ -399,14 +436,15 @@ def classFeedView(request,id):
             ClassFeedMessage.objects.create(classroom=classroom,sender=sender,message=message)
         return redirect('classFeed',id)
 
-    messages = ClassFeedMessage.objects.filter(classroom=classroom).order_by('timestamp')
-    print(messages)
-    return render(request,'learnerApp/classFeed.html',context={'id':id,'extemp':extemp,'classroom':classroom,'messages':messages})
+    feed_messages = ClassFeedMessage.objects.filter(classroom=classroom).order_by('timestamp')
+    print(feed_messages)
+    return render(request,'learnerApp/classFeed.html',context={'id':id,'extemp':extemp,'classroom':classroom,'messages':feed_messages})
 
 def classTestsView(request,id):
     try:
         classroom = Classroom.objects.get(pk=id)    
     except:
+        messages.error(request,"Class Does Not Exist.")
         return redirect('dashboard')
     extemp = getBasetemp(request)
     if request.user.is_faculty:
@@ -414,7 +452,7 @@ def classTestsView(request,id):
         responses = None
     elif request.user.is_student:
         tests = Test.objects.filter(classroom=classroom, start_time__lte = timezone.localtime(timezone.now()), end_time__gte = timezone.localtime(timezone.now()), published = True).exclude(test_id__in=TestResponse.objects.filter(student = Student.objects.get(user=request.user)).values_list('test').values_list('test_id'))
-        responses = TestResponse.objects.filter(student = Student.objects.get(user = request.user))
+        responses = TestResponse.objects.filter(student = Student.objects.get(user = request.user),test__classroom=classroom)
     return render(request,'learnerApp/classTests.html',context={'id':id,'extemp':extemp,'classroom':classroom,'tests':tests,'responses':responses})
 
 def testAttend(request,id,tid):
@@ -424,6 +462,7 @@ def testAttend(request,id,tid):
         test = Test.objects.get(test_id = tid)
         questions = TestQuestion.objects.filter(test=test)    
     except:
+        messages.error(request,"Invalid Access.")
         return redirect('dashboard')
     if request.method == 'POST':
         testResponse = TestResponse.objects.create(test=test,student = Student.objects.get(user = request.user))
@@ -443,6 +482,7 @@ def viewResponse(request,id,tid,rid):
         test = Test.objects.get(test_id = tid)
         response = TestResponse.objects.get(response_id = rid)
     except:
+        messages.error(request,"Invalid Access.")
         return redirect('dashboard')
     extemp = getBasetemp(request)
     answers = TestQuestionResponse.objects.filter(response=response)
@@ -452,6 +492,7 @@ def classMaterialView(request,id):
     try:
         classroom = Classroom.objects.get(pk=id)    
     except:
+        messages.error(request,"Class Does Not Exist.")
         return redirect('dashboard')
     extemp = getBasetemp(request)
     materials = ClassMaterial.objects.filter(classroom=classroom)
@@ -462,6 +503,7 @@ def classMembersView(request,id):
     try:
         classroom = Classroom.objects.get(pk=id)
     except:
+        messages.error(request,"Class Does Not Exist.")
         return redirect('dashboard')
     extemp = getBasetemp(request)
     if request.method == 'POST':
@@ -482,6 +524,7 @@ def classFacultyTransfer(request,id):
         classroom = Classroom.objects.get(pk=id)
         presentFaculty = Faculty.objects.get(user=request.user)
     except:
+        messages.error(request,"Class Does Not Exist.")
         return redirect('dashboard')
     try:
         newFaculty = request.POST.get('user_email')
@@ -498,6 +541,7 @@ def classCallView(request,id):
     try:
         classroom = Classroom.objects.get(pk=id)
     except:
+        messages.error(request,"Class Does Not Exist.")
         return redirect('dashboard')
     extemp = getBasetemp(request)
     if request.user.is_faculty:
@@ -590,24 +634,26 @@ def ClassAddQuestion(request,id,tid):
         if not Faculty.objects.get(user=request.user) == classroom.faculty:
             return redirect('dashboard')
     except:
+        messages.error(request,"Unauthorized Access.")
         return redirect('dashboard')
     extemp = getBasetemp(request)
     test = Test.objects.get(test_id = tid)
     if request.method == 'POST':
-        question = request.POST.get('question')
-        option_1 = request.POST.get('option_1')
-        option_2 = request.POST.get('option_2')
-        option_3 = request.POST.get('option_3')
-        option_4 = request.POST.get('option_4')
-        correct = request.POST.get('correct')
-        TestQuestion.objects.create(test=test,question=question,option_1=option_1,option_2=option_2,option_3=option_3,option_4=option_4,correct=correct)
-        return redirect('classTestManage',id,tid)
+        try:
+            question = request.POST.get('question')
+            option_1 = request.POST.get('option_1')
+            option_2 = request.POST.get('option_2')
+            option_3 = request.POST.get('option_3')
+            option_4 = request.POST.get('option_4')
+            correct = request.POST.get('correct')
+            TestQuestion.objects.create(test=test,question=question,option_1=option_1,option_2=option_2,option_3=option_3,option_4=option_4,correct=correct)
+            messages.success(request,"New Question Added.")
+            return redirect('classTestManage',id,tid)
+        except Exception as ex:
+            messages.error(request,str(ex))
+            return render(request,'learnerApp/addQuestion.html',context={'id':id,'extemp':extemp,'classroom':classroom,'test':test})
     else:
         return render(request,'learnerApp/addQuestion.html',context={'id':id,'extemp':extemp,'classroom':classroom,'test':test})
-
-def createAdmin(request):
-    Admin.objects.create(user=request.user)
-    return redirect('dashboard')
 
 def courseList(request):
     myCourses = None
@@ -681,6 +727,7 @@ def courseRegister(request,id):
         return redirect('dashboard')
 
 def sendPass(name,email,password):
+    print(password)
     subject = 'Welcome to E-class'
     message = f'''Hi {name},You have been registered to E-class.
     your username: {email}
@@ -688,3 +735,89 @@ def sendPass(name,email,password):
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [email, ]
     send_mail( subject, message, email_from, recipient_list )
+
+
+def addCourseTest(request,id):
+    course = Course.objects.get(classroom_id=id)
+    test = CourseTest.objects.create(course=course)
+    test.save()
+    return redirect('course',id)    
+
+def courseTestManage(request,id):
+    try:
+        course = Course.objects.get(course_id=id)
+        if not Faculty.objects.get(user=request.user) == course.faculty:
+            return redirect('dashboard')
+    except:
+        return redirect('dashboard')
+    extemp = getBasetemp(request)
+    test = CourseTest.objects.get(course=course)
+    questions = CourseTestQuestion.objects.filter(test=test)
+    responses = CourseTestResponse.objects.filter(test=test)
+    return render(request,'learnerApp/classTestManage.html',context={'id':id,'extemp':extemp,'course':course,'test':test,'questions':questions,'responses':responses})
+
+def courseTogglePublish(request,id):
+    try:
+        course = Course.objects.get(course_id = id)
+        test = CourseTest.objects.get(course=course)
+        if test.course.faculty == Faculty.objects.get(user=request.user):
+            if test.published:
+                CourseTestResponse.objects.filter(test = test).delete()
+            test.published = not test.published
+            test.save()
+            return redirect('classTestManage',id=id)
+    except:
+        pass
+    return redirect('dashboard')
+
+def CourseAddQuestion(request,id):
+    try:
+        course = Course.objects.get(course_id=id)
+        if not Faculty.objects.get(user=request.user) == course.faculty:
+            return redirect('dashboard')
+    except:
+        return redirect('dashboard')
+    extemp = getBasetemp(request)
+    test = CourseTest.objects.get(course = course)
+    if request.method == 'POST':
+        question = request.POST.get('question')
+        option_1 = request.POST.get('option_1')
+        option_2 = request.POST.get('option_2')
+        option_3 = request.POST.get('option_3')
+        option_4 = request.POST.get('option_4')
+        correct = request.POST.get('correct')
+        CourseTestQuestion.objects.create(test=test,question=question,option_1=option_1,option_2=option_2,option_3=option_3,option_4=option_4,correct=correct)
+        return redirect('classTestManage',id)
+    else:
+        return render(request,'learnerApp/addQuestion.html',context={'id':id,'extemp':extemp,'course':course,'test':test})
+
+def courseTestAttend(request,id):
+    extemp = getBasetemp(request)
+    try:
+        course = Course.objects.get(pk=id)
+        test = CourseTest.objects.get(course = course)
+        questions = CourseTestQuestion.objects.filter(test=test)    
+    except:
+        return redirect('dashboard')
+    if request.method == 'POST':
+        testResponse = CourseTestResponse.objects.create(test=test,student = Student.objects.get(user = request.user))
+        testResponse.save()
+        for question in questions:
+            answer = request.POST.get(str(question.question_id))
+            is_correct = answer == question.correct
+            CourseTestQuestionResponse.objects.create(response=testResponse,question = question,option = answer,is_correct = is_correct)
+        return redirect('classTests',id)
+    else:
+        questions = CourseTestQuestion.objects.filter(test=test)
+        return render(request,'learnerApp/testAttend.html',context={'extemp':extemp,'id':id,'test':test,'course':course,'questions':questions})
+
+def courseViewResponse(request,id,rid):
+    try:
+        course = Course.objects.get(classroom_id=id)
+        test = CourseTest.objects.get(course = course)
+        response = CourseTestResponse.objects.get(response_id = rid)
+    except:
+        return redirect('dashboard')
+    extemp = getBasetemp(request)
+    answers = CourseTestQuestionResponse.objects.filter(response=response)
+    return render(request,'learnerApp/viewResponse.html',context={'id':id,'extemp':extemp,'course':course,'test':test,'response':response,'answers':answers})

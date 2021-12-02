@@ -71,6 +71,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'eclass.wsgi.application'
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -141,6 +142,6 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = "chirayurathi4@gmail.com"
 
-EMAIL_HOST_PASSWORD = "h@miltoniAn11"
+EMAIL_HOST_PASSWORD = "h@miltoniAn40"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
