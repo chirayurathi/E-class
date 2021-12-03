@@ -5,15 +5,19 @@ cffi==1.14.5
 cssselect2==0.4.1
 cv==1.0.0
 defusedxml==0.7.1
+dj-database-url==0.5.0
 Django==3.1.7
 django-cors-headers==3.7.0
+django-heroku==0.3.1
 django-wkhtmltopdf==3.3.0
+gunicorn==20.1.0
 html2image==1.1.2
 html5lib==1.1
 imgkit==1.2.2
 numpy==1.20.3
 opencv-python==4.5.2.52
 Pillow==8.2.0
+psycopg2==2.9.2
 py3-wkhtmltopdf @ git+https://github.com/jontsai/python3-wkhtmltopdf.git@379ab788882dddc7df3c07f99e39f93e6bfc2e9b
 pycairo==1.20.0
 pycparser==2.20
@@ -25,4 +29,5 @@ tinycss2==1.1.0
 WeasyPrint==52.5
 webencodings==0.5.1
 webkit2png==0.8.2
+whitenoise==5.3.0
 wkhtmltopdf==0.2

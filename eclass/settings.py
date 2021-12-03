@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+import django_heroku
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -78,8 +79,12 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': 'd8l41hqc9rauh4',
+       'USER': 'nxxuhdssxlsvgn',
+       'PASSWORD': '23d4e9bd497b5744d2af9c357f588cae50aecea8a5e809bbf1c553b4f2364b0e',
+       'HOST': 'ec2-23-23-141-171.compute-1.amazonaws.com',
+       'PORT': '5432',
     }
 }
 
@@ -145,3 +150,7 @@ EMAIL_HOST_USER = "chirayurathi4@gmail.com"
 EMAIL_HOST_PASSWORD = "h@miltoniAn40"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# Activate Django-Heroku.
+django_heroku.settings(locals())
