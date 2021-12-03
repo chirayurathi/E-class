@@ -1,0 +1,34 @@
+.testsList ul{
+    list-style: none;
+}
+.question{
+    width: 70%;
+    margin-left:5%;
+    margin-right: 15%;
+    padding: 20px 50px;
+    background-color: #e4f1eac0;
+    border-radius: 7px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.question li{
+    margin: 10px 0;
+}
+.question p{
+    margin-left: 20px;
+}
+h2{
+    margin-left: 8%;
+}
+.lower.add{
+    top:calc( 9vh + 60px );
+}
+.report .title{
+    text-align: left;
+}
+.question.incorrect{
+    background-color: rgba(247, 228, 228, 0.836);
+}
+.testsList{
+    padding-bottom: 50px;
+}

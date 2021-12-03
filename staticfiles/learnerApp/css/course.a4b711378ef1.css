@@ -1,0 +1,84 @@
+.details{
+    height: 70vh;
+    width: 100%;
+    background-color: rgb(245, 248, 248);
+    position: absolute;
+    left: 0;
+    top: 0vh;
+    box-sizing: border-box;
+    padding: 5%;
+    transition: 0.5s;
+}
+img{
+    width: 150px;
+    height: 150px;
+    border-radius: 7px;
+}
+.activeNav .details{
+    padding-left: 20%;
+}
+.details h1{
+    text-transform: capitalize;
+    padding: 0;
+    margin: 0;
+}
+.main{
+    display: flex;
+    width: 600px;
+    justify-content: left;
+}
+.main img{
+    margin-right: 30px;
+}
+.faculty{
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    width: 300px;
+    font-size: 17px;
+}
+.faculty div{
+    height: 50px;
+}
+.faculty div p{
+    line-height: 50px;
+    height: 100%;
+    display: inline-block;
+    margin: 0;
+    font-size: 19px;
+    vertical-align: top;
+}
+.faculty img{
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+}
+.description{
+    width: 50%;
+    margin: 5% 0;
+}
+.reg{
+    outline: 0;
+    background-color: #47df86;
+    border: 0;
+    padding: 12px 15px;
+    color: white;
+    border-radius: 3px;
+    width: 185px;
+    cursor: pointer;
+    font-size: 18px;
+    transition-duration: 0.25s;
+    display: block;
+    z-index: 20;
+    text-align: center;
+}
+.reg:hover {
+    background-color: #2ecc71;
+}
+.videos{
+    position: relative;
+    margin-top: 70vh;
+}
+.add{
+    top: 0;
+}

@@ -1,0 +1,103 @@
+body{
+    width: 100%;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+}
+nav{
+    position: fixed;
+    z-index:100;
+    height: 7vh;
+    width: 100%;
+    top:0;
+    background: -webkit-linear-gradient(.25turn, #2ecc71 10%, #8bd9b9 90%);
+    background: -moz-linear-gradient(.25turn, #2ecc71 10%, #8bd9b9 90%);
+    background: -ms-linear-gradient(.25turn, #2ecc71 10%, #8bd9b9 90%);
+    background: -o-linear-gradient(.25turn, #2ecc71 10%, #8bd9b9 90%);
+    background: linear-gradient(.25turn, #2ecc71 10%, #8bd9b9 90%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    box-sizing: border-box;
+    align-items: center;
+    color: white;
+}
+nav h1{
+    font-family: 'Kiwi Maru', serif;
+}
+.buttons{
+    height: 100%;
+    width: 100px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.buttons button{
+    width: 90px;
+    height: 80%;
+    border-radius: 7px;
+    outline: none;
+    border:1px solid white;
+    background:#8bd9b9;
+    color: white;
+    font-size: 15px;
+}
+button a{
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 5.6vh;
+}
+a{
+    color: inherit;
+    text-decoration: none;
+}
+.container{
+    position: absolute;
+    top:7vh;
+    left:0;
+    width: 100%;
+    height: 100%;
+}
+
+@keyframes fadeOut {
+    from{
+        opacity: 1;
+    }
+    to{
+        opacity: 0;
+    }
+}
+.messages{
+    position: relative;
+    width: 100%;
+}
+.messages li {
+	border-radius: 7px;
+	box-shadow: 3px 3px 4px 0px rgba(50, 50, 50, 0.719);
+	color: white;
+	margin-bottom: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-bottom: 10px;
+	padding-top: 10px;
+	text-align: center;
+	width: 50%;
+    transition: 3s;
+    -webkit-animation: fadeOut 1s;
+    animation: fadeOut 1s;
+    animation-fill-mode: forwards;
+    animation-delay: 5s;
+}
+
+.success {
+	background-color: green;
+}
+
+.error {
+	background-color: #dc3545;
+}
